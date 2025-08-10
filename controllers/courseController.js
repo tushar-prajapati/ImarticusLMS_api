@@ -37,36 +37,28 @@ const createCourse = asyncHandler(async(req,res)=>{
 
 const summarizePdf = asyncHandler(async(req,res)=>{
         try {
-            const {pdfUrl} = req.body;
-            // if(!pdfUrl){
-            //     throw new ApiError(402, "No PDF Found!")
-            // }
-            // const pdf = await fetch(pdfUrl);
-            // console.log(pdf);
+            const {fileUrl} = req.body;
+            if(!fileUrl){
+                throw new ApiError(402, "No File Found!")
+            }
+            const data = await fetch(fileUrl);
+            const textData = await data.text();
 
-            // if (!pdf.ok) {
-            //     throw new ApiError(402, "Unable to fetch PDF");
-            // }
+           
 
-            // const pdfBuffer = await pdf.arrayBuffer();
-            // const pdfData = await PdfParse(Buffer.from(pdfBuffer));
-            // const extractedText = pdfData.text;
-            // if (!extractedText.trim()) {
-            //      throw new ApiError(402, "No text found in PDF") ;
-            // }
-            // const prompt = `Summarize the following text in a concise paragraph:\n\n${extractedText}`;
-            // res.status(200).send(prompt);
+            if (!textData.trim()) {
+                 throw new ApiError(402, "No text found in File") ;
+            }
+            const prompt = `Summarize the following text in a concise paragraph:\n\n${textData}`;
             
-            
-
 
             const ai = new GoogleGenAI({});
             
-            // const response = await ai.models.generateContent({
-            //     model: "gemini-2.5-flash",
-            //     contents: "Explain how AI works in a few words",
-            //   });
-            //   res.status(200).json({res: response.text});
+            const response = await ai.models.generateContent({
+                model: "gemini-2.5-flash",
+                contents: prompt,
+              });
+              res.status(200).json({summary: response.text});
 
         } catch (error) {
             throw new ApiError(403, error)
