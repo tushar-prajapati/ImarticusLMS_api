@@ -13,7 +13,8 @@ connectDB();
 const app = express()
 
 app.use(cors({
-    origin: '*',
+    // origin: '*',
+    origin: 'https://imarticus-lms.vercel.app',
     credentials: true,
 }))
 app.use(express.json());
