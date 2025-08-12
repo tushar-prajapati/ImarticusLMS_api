@@ -32,6 +32,7 @@ const sectionSchema = new mongoose.Schema({
 const courseSchema = new mongoose.Schema({
   title: { type: String, required: true },
   image: String,
+  amount: Number,
   batch: { type: String, required: true },
   sections: [sectionSchema],
 }, { timestamps: true });
