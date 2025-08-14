@@ -12,7 +12,7 @@ const getCourseDetails = asyncHandler(async(req,res)=>{
         }
         else{
             const course = await  client.get(`courseData:${courseId}`);
-            if(course.length != 0){
+            if(course && course.length != 0){
                 res.status(200).json(JSON.parse(course))
             }
             else{
