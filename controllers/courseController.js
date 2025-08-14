@@ -2,23 +2,35 @@ import Course from "../ models/courseModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { GoogleGenAI } from "@google/genai";
+import client from "../config/redisConfig.js";
 
 const getCourseDetails = asyncHandler(async(req,res)=>{
     try {
         const {courseId} = req.params;
         if(!courseId){
-           throw new ApiError(402, "CourseId not present") 
+           throw new ApiError(402, "CourseId not present");
         }
         else{
-            const course = await Course.findById(courseId);
-            if(!course){
-                throw new ApiError(402, "Course is not present")
+            const course = await  client.get(`courseData:${courseId}`);
+            if(course.length != 0){
+                res.status(200).json(JSON.parse(course))
             }
-            res.status(200).json(course)
+            else{
+                const courseData = await Course.findById(courseId); 
+                if(!courseData){
+                    throw new ApiError(402, "Course is not present")
+                }
+
+                await client.set(`courseData:${courseId}`, JSON.stringify(courseData))
+                
+                res.status(200).json(courseData)
+            }            
         }
     } catch (error) {
         throw new ApiError(403, error)
     }
+
+
 })
 
 const createCourse = asyncHandler(async(req,res)=>{

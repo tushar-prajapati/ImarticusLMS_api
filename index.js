@@ -19,8 +19,8 @@ app.use(cookieParser());
 
 
 app.use(cors({
-    // origin: '*',
-    origin: 'https://imarticus-lms.vercel.app',
+    origin: '*',
+    // origin: 'https://imarticus-lms.vercel.app',
     credentials: true,
 }))
 app.use(express.json());
